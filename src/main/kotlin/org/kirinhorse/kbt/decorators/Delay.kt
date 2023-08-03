@@ -1,12 +1,11 @@
-package com.xqkj.app.bigclicker.btree.decorators
+package org.kirinhorse.kbt.decorators
 
+import kotlinx.coroutines.delay
+import org.kirinhorse.kbt.BehaviorTree
 import org.kirinhorse.kbt.Decorator
 import org.kirinhorse.kbt.KBTInput
 import org.kirinhorse.kbt.NodeConfig
-import com.xqkj.app.bigclicker.btree.BTOffset.offset
 import org.kirinhorse.kbt.Types
-import org.kirinhorse.kbt.BehaviorTree
-import kotlinx.coroutines.delay
 
 @KBTInput("duration", Types.BTType.Int)
 class Delay(behaviorTree: BehaviorTree, config: NodeConfig) : Decorator(behaviorTree, config) {
@@ -16,7 +15,7 @@ class Delay(behaviorTree: BehaviorTree, config: NodeConfig) : Decorator(behavior
 
     override suspend fun onExecute(): Boolean {
         startTime = now
-        duration = offset(getInput("duration", Int::class))
+        duration = getInput("duration", Int::class)
         while (duration > 0) {
             delay(duration.toLong())
             if (isPaused) pauseDeferred?.await()
