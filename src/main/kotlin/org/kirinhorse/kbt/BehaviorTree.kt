@@ -28,4 +28,9 @@ class BehaviorTree(val config: BehaviorTreeConfig) {
         root.reset()
         for (l in treeListeners) l.onStop(this)
     }
+
+    fun addTreeListener(listener: TreeListener) = treeListeners.add(listener)
+    fun removeTreeListener(listener: TreeListener) = treeListeners.remove(listener)
+    fun addNodeListener(listener: NodeListener) = nodeListeners.add(listener)
+    fun removeNodeListener(listener: NodeListener) = nodeListeners.remove(listener)
 }
