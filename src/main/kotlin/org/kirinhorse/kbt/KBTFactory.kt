@@ -1,10 +1,10 @@
 package org.kirinhorse.kbt
 
-import com.xqkj.app.bigclicker.btree.controls.Fallback
-import com.xqkj.app.bigclicker.btree.controls.Parallel
-import com.xqkj.app.bigclicker.btree.controls.Sequence
+import org.kirinhorse.kbt.controls.Fallback
+import org.kirinhorse.kbt.controls.Parallel
+import org.kirinhorse.kbt.controls.Sequence
 import org.kirinhorse.kbt.decorators.Delay
-import com.xqkj.app.bigclicker.btree.decorators.Repeat
+import org.kirinhorse.kbt.decorators.Repeat
 import org.kirinhorse.kbt.actions.ActionPause
 import org.kirinhorse.kbt.actions.ActionResume
 import org.kirinhorse.kbt.actions.ActionStop

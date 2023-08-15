@@ -1,6 +1,6 @@
 package org.kirinhorse.kbt.expression
 
-import com.xqkj.app.bigclicker.btree.types.KBTVector2
+import org.kirinhorse.kbt.types.KBTVector2
 
 class ExpArgument(val exp: Expression, private val expText: String, value: Any? = null) {
     private val swc = Expression.STRING_WRAPPER_CHAR

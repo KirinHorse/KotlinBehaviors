@@ -1,4 +1,4 @@
-package com.xqkj.app.bigclicker.btree.controls
+package org.kirinhorse.kbt.controls
 
 import org.kirinhorse.kbt.Control
 import org.kirinhorse.kbt.NodeConfig

@@ -1,9 +1,9 @@
-package com.xqkj.app.bigclicker.btree.expression.symbols
+package org.kirinhorse.kbt.expression.symbols
 
 import org.kirinhorse.kbt.expression.Expression
 import org.kirinhorse.kbt.expression.ExpArgument
 import org.kirinhorse.kbt.expression.ExpSymbol
-import com.xqkj.app.bigclicker.btree.types.KBTVector2
+import org.kirinhorse.kbt.types.KBTVector2
 
 class ExpVector2(exp: Expression, keyWord: String, position: Int) : ExpSymbol(exp, keyWord, position) {
     override fun onResolve(): ExpArgument {

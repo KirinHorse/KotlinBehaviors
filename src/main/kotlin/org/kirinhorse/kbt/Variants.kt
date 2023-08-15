@@ -18,20 +18,19 @@ class Variants(val config: VariantsConfig) {
         fun Variant.encode() = "$key:${type.name}=$value"
     }
 
-    val map = config.map.toMap()
+    private val map = config.map.toMap()
 
-    fun getVariant(key: String) = map[key] ?: throw ErrorVariantNotFound(key)
+    fun getVariant(key: String) = map[key]
 
     fun <T : Any> get(key: String, clazz: KClass<T>): T? {
-        val v = getVariant(key)
+        val v = map[key] ?: return null
         if (!v.type.clazz.isSubclassOf(clazz)) throw ErrorTypeWrong(key)
         @Suppress("UNCHECKED_CAST") return v.value as T?
     }
 
     operator fun <T : Any> set(key: String, value: T?) {
-        val v = getVariant(key)
+        val v = map[key] ?: throw ErrorVariantNotFound(key)
         if (value != null && !value::class.isSubclassOf(v.type.clazz)) throw ErrorTypeWrong(key)
         v.value = value
     }
-
 }

@@ -1,7 +1,5 @@
 package org.kirinhorse.kbt.expression
 
-import com.xqkj.app.bigclicker.btree.expression.ExpErrorOperator
-
 abstract class ExpOperator(val exp: Expression, val keyWord: String, val position: Int) {
     private val priority get() = ExpFactory.optBuilders[keyWord]!!.priority
     private val leftCombine get() = ExpFactory.optBuilders[keyWord]!!.leftCombine

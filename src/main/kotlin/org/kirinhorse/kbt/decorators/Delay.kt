@@ -10,8 +10,8 @@ import org.kirinhorse.kbt.Types
 @KBTInput("duration", Types.BTType.Int)
 class Delay(behaviorTree: BehaviorTree, config: NodeConfig) : Decorator(behaviorTree, config) {
     private val now get() = System.currentTimeMillis()
-    var startTime = 0L
-    var duration = 0
+    private var startTime = 0L
+    private var duration = 0
 
     override suspend fun onExecute(): Boolean {
         startTime = now

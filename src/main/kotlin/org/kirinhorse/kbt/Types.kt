@@ -1,6 +1,6 @@
 package org.kirinhorse.kbt
 
-import com.xqkj.app.bigclicker.btree.types.KBTVector2
+import org.kirinhorse.kbt.types.KBTVector2
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 

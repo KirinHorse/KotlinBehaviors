@@ -1,2 +1,2 @@
 # KotlinBehaviors
-Behavior Trees Library in Kotlin
+Behavior Trees Library in Kotlin, with variables and expressions surpport.

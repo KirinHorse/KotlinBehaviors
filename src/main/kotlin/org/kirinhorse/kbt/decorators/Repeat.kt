@@ -1,4 +1,4 @@
-package com.xqkj.app.bigclicker.btree.decorators
+package org.kirinhorse.kbt.decorators
 
 import org.kirinhorse.kbt.Decorator
 import org.kirinhorse.kbt.NodeConfig

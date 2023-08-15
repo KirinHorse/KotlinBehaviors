@@ -1,6 +1,5 @@
 package org.kirinhorse.kbt.expression
 
-import com.xqkj.app.bigclicker.btree.expression.ExpErrorUnknownSymbol
 import org.kirinhorse.kbt.Variants
 
 class Expression(val variants: Variants, val expText: String) {
@@ -63,7 +62,7 @@ class Expression(val variants: Variants, val expText: String) {
         if (minOpt != null) return minOpt.resolve()
         if (text.startsWith('$')) {
             val variant = variants.getVariant(text.substring(1))
-            return ExpArgument(this, "", variant.value)
+            return ExpArgument(this, "", variant?.value)
         }
         if (text.startsWith('(') && text.endsWith(')')) {
             return ExpArgument(this, text.substring(1, text.length - 1))

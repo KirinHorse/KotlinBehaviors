@@ -2,13 +2,7 @@ package org.kirinhorse.kbt
 
 import org.kirinhorse.kbt.KBTHelper.subBetween
 
-class NodeConfig(
-    var name: String?,
-    val type: String,
-    val inputs: MutableMap<String, String>?,
-    val outputs: MutableMap<String, String>?,
-    val children: MutableList<NodeConfig>?
-) {
+class NodeConfig(var name: String?, val type: String, val inputs: MutableMap<String, String>?, val outputs: MutableMap<String, String>?, val children: MutableList<NodeConfig>?) {
     private fun encodeMap(map: Map<String, String>?): String {
         if (map.isNullOrEmpty()) return ""
         return map.entries.joinToString(",") { "${it.key}=${it.value}" }

@@ -1,4 +1,4 @@
-package com.xqkj.app.bigclicker.btree.expression.symbols
+package org.kirinhorse.kbt.expression.symbols
 
 import org.kirinhorse.kbt.expression.Expression
 import org.kirinhorse.kbt.expression.ExpArgument

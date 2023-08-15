@@ -1,8 +1,6 @@
-package com.xqkj.app.bigclicker.btree.expression
+package org.kirinhorse.kbt.expression
 
 import org.kirinhorse.kbt.Error
-import org.kirinhorse.kbt.expression.ExpOperator
-import org.kirinhorse.kbt.expression.Expression
 
 abstract class ExpError(val exp: Expression) : Error()
 
