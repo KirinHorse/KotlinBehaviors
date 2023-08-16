@@ -4,8 +4,8 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlin.reflect.KClass
 
 abstract class Node(val tree: BehaviorTree, val config: NodeConfig) {
-    val inputs = BTInPort.create(tree, config)
-    val outputs = BTOutPort.create(tree, config)
+    private val inputs = BTInPort.create(tree, config)
+    private val outputs = BTOutPort.create(tree, config)
 
     var isRunning = false
         private set
