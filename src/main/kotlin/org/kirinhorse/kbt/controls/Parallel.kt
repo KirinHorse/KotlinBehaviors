@@ -9,7 +9,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 
-@KBTInput(key = "minSuccessTimes", type = Types.BTType.Int)
+@KBTInput(key = "minSuccessTimes", type = Types.KBTType.Int)
 class Parallel(behaviorTree: BehaviorTree, config: NodeConfig) : Control(behaviorTree, config) {
     override suspend fun onExecute(): Boolean {
         val minSuccessTimes = getInput("minSuccessTimes", Int::class)

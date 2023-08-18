@@ -3,14 +3,15 @@ package org.kirinhorse.kbt
 import org.kirinhorse.kbt.KBTHelper.subBetween
 import org.kirinhorse.kbt.Types.toValue
 import org.kirinhorse.kbt.expression.ExpFactory
+import kotlin.math.roundToInt
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 
 @Repeatable
-annotation class KBTInput(val key: String, val type: Types.BTType)
+annotation class KBTInput(val key: String, val type: Types.KBTType)
 
 @Repeatable
-annotation class KBTOutput(val key: String, val type: Types.BTType)
+annotation class KBTOutput(val key: String, val type: Types.KBTType)
 
 class BTInPort(val variants: Variants, inputs: List<KBTInput>, inputConfig: MutableMap<String, String>) {
     private val values = mapOf(* inputs.map { it.key to BTInValue(it, inputConfig[it.key] ?: "") }.toTypedArray())
@@ -47,10 +48,12 @@ class BTInPort(val variants: Variants, inputs: List<KBTInput>, inputConfig: Muta
         private fun readValue() = if (!isValue) null else input.type.toValue(text)
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <T : Any> get(key: String, clazz: KClass<T>): T? {
         val inValue = values[key] ?: throw ErrorInputNotFound(key)
         val value = inValue.read() ?: return null
-        @Suppress("UNCHECKED_CAST") if (value::class.isSubclassOf(clazz)) return value as T
+        if (clazz == Int::class && value is Float) return value.roundToInt() as T
+        if (value::class.isSubclassOf(clazz)) return value as T
         throw ErrorTypeWrong(key)
     }
 }

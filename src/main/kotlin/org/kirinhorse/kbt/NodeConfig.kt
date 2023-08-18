@@ -1,8 +1,12 @@
 package org.kirinhorse.kbt
 
-import org.kirinhorse.kbt.KBTHelper.subBetween
-
-class NodeConfig(var name: String?, val type: String, val inputs: MutableMap<String, String>?, val outputs: MutableMap<String, String>?, val children: MutableList<NodeConfig>?) {
+class NodeConfig(
+    var name: String?,
+    val type: String,
+    val inputs: MutableMap<String, String>?,
+    val outputs: MutableMap<String, String>?,
+    val children: MutableList<NodeConfig>?
+) {
     private fun encodeMap(map: Map<String, String>?): String {
         if (map.isNullOrEmpty()) return ""
         return map.entries.joinToString(",") { "${it.key}=${it.value}" }
@@ -10,18 +14,19 @@ class NodeConfig(var name: String?, val type: String, val inputs: MutableMap<Str
 
     private fun encodeList(list: List<NodeConfig>?, indent: Int): String {
         if (list.isNullOrEmpty()) return ""
-        val result = list.joinToString("\n", "\n", "\n") { it.encode(indent) }
-        return ":$result"
+        var indents = ""
+        for (i in 0 until indent - 1) indents += "\t"
+        return list.joinToString("\n", "{\n", "\n$indents}") { it.encode(indent) }
     }
 
     fun encode(indent: Int): String {
         var indents = ""
         for (i in 0 until indent) indents += "\t"
         val nameStr = if (name.isNullOrBlank()) "" else "[$name]"
-        val inputsStr = "(${encodeMap(inputs)})"
-        val outputsStr = "(${encodeMap(outputs)})"
+        val inputsStr = if (inputs.isNullOrEmpty()) "" else "(${encodeMap(inputs)})"
+        val outputsStr = if (outputs.isNullOrEmpty()) "" else "->(${encodeMap(outputs)})"
         val body = encodeList(children, indent + 1)
-        return "$indents$type$nameStr$inputsStr=>$outputsStr$body"
+        return "$indents$type$nameStr$inputsStr$outputsStr$body"
     }
 
     companion object {
@@ -30,7 +35,7 @@ class NodeConfig(var name: String?, val type: String, val inputs: MutableMap<Str
             val map = mutableMapOf<String, String>()
             text.split(',').forEach {
                 if (it.isBlank()) return@forEach
-                val (key, value) = it.split('=')
+                val (key, value) = it.split('=', limit = 2)
                 map[key.trim()] = value.trim()
             }
             return map
@@ -39,22 +44,129 @@ class NodeConfig(var name: String?, val type: String, val inputs: MutableMap<Str
         private fun decodeList(text: String?): MutableList<NodeConfig>? {
             if (text.isNullOrBlank()) return null
             val list = mutableListOf<NodeConfig>()
-            text.trimIndent().split('\n').forEach { list.add(decode(it)) }
+            var parser = Parser(text.trim())
+            do {
+                if (list.isNotEmpty()) parser = Parser(parser.next!!)
+                val inputs = decodeMap(parser.inputs)
+                val outputs = decodeMap(parser.outputs)
+                val children = decodeList(parser.children)
+                val config = NodeConfig(parser.name, parser.type!!, inputs, outputs, children)
+                list.add(config)
+            } while (parser.hasNext)
             return list
         }
 
-        fun decode(text: String): NodeConfig {
-            val trimText = text.trim()
-            val line1 = trimText.substringBefore(':')
-            val splits = line1.split("->")
-            val text1 = splits[0]
-            val name = text1.subBetween('[', ']')
-            val inputs = decodeMap(text1.subBetween('(', ')'))
-            val type = text1.substringBefore(if (name != null) '[' else if (inputs != null) '(' else ':').trim()
-            val text2 = if (splits.size > 1) splits[1] else null
-            val outputs = decodeMap(text2?.subBetween('(', ')'))
-            val children = decodeList(text.substringAfter(':', ""))
-            return NodeConfig(name, type, inputs, outputs, children)
+        /***
+         * #type[#name](#input)->(#output):#children
+         * sample:
+         * SEQ:
+         *  delay(duration=2000)
+         *  print(text="some texts")
+         */
+        fun decode(text: String): NodeConfig = decodeList(text)!!.first()
+    }
+
+    class Parser(val text: String) {
+        var type: String? = null
+        var name: String? = null
+        var inputs: String? = null
+        var outputs: String? = null
+        var children: String? = null
+        var hasNext = false
+        var next: String? = null
+
+        private val chars = text.iterator()
+
+        init {
+            check()
+        }
+
+        private fun check() {
+            val sb = StringBuffer()
+            while (chars.hasNext()) {
+                val c = chars.next()
+                when (c) {
+                    '[' -> if (name == null) {
+                        readType(c, sb)
+                        readName()
+                        return
+                    }
+
+                    '(' -> if (inputs == null) {
+                        readType(c, sb)
+                        readInputs()
+                        return
+                    } else if (outputs == null) {
+                        readType(c, sb)
+                        readOutputs()
+                        return
+                    }
+
+                    '>' -> if (sb.lastOrNull() == '-' && outputs == null) {
+                        if (inputs == null) inputs = ""
+                        readType(c, sb)
+                    }
+
+                    '{' -> if (children == null) {
+                        readType(c, sb)
+                        readChildren()
+                        return
+                    }
+
+                    '\n' -> {
+                        readType(c, sb)
+                        if (chars.hasNext()) {
+                            hasNext = true
+                            val remain = StringBuffer()
+                            while (chars.hasNext()) remain.append(chars.next())
+                            next = remain.toString()
+                        }
+                        return
+                    }
+                }
+                sb.append(c)
+            }
+        }
+
+        private fun readType(c: Char, sb: StringBuffer) {
+            if (type != null) return
+            type = if (c == '>') sb.substring(0, sb.length - 1).trim()
+            else sb.toString().trim()
+        }
+
+        private fun read(left: Char, right: Char): String {
+            val sb = StringBuffer()
+            var deep = 0
+            while (chars.hasNext()) {
+                val c = chars.next()
+                if (c == left) deep++
+                else if (c == right) {
+                    if (deep == 0) return sb.toString().trim()
+                    deep--
+                }
+                sb.append(c)
+            }
+            return sb.toString().trim()
+        }
+
+        private fun readName() {
+            name = read('[', ']')
+            check()
+        }
+
+        private fun readInputs() {
+            inputs = read('(', ')')
+            check()
+        }
+
+        private fun readOutputs() {
+            outputs = read('(', ')')
+            check()
+        }
+
+        private fun readChildren() {
+            children = read('{', '}')
+            check()
         }
     }
 }

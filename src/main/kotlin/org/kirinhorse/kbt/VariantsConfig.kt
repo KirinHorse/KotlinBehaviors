@@ -19,8 +19,9 @@ class VariantsConfig(val map: MutableMap<String, Variants.Variant>) {
     }
 
     fun encode(indent: Int): String {
+        if (map.isEmpty()) return ""
         var indents = ""
-        for (i in 0 until indent) indents += 't'
+        for (i in 0 until indent) indents += '\t'
         return map.values.joinToString("\n", indents) { it.encode() }
     }
 

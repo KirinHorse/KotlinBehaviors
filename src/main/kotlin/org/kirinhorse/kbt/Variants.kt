@@ -1,18 +1,21 @@
 package org.kirinhorse.kbt
 
 import org.kirinhorse.kbt.KBTHelper.subBetween
+import org.kirinhorse.kbt.Types.toValue
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 
 class Variants(val config: VariantsConfig) {
 
-    data class Variant(val key: String, val type: Types.BTType, var value: Any?)
+    data class Variant(val key: String, val type: Types.KBTType, var value: Any?)
     companion object {
         fun decodeVariant(text: String): Variant {
             val key = text.substringBefore(':').trim()
-            val type = text.subBetween(':', '=')!!.trim()
-            val value = text.substringAfter('=').trim()
-            return Variant(key, Types.BTType.valueOf(type), value)
+            val typeStr = text.subBetween(':', '=')!!.trim()
+            val type = Types.KBTType.valueOf(typeStr)
+            val valueStr = text.substringAfter('=').trim()
+            val value = type.toValue(valueStr)
+            return Variant(key, type, value)
         }
 
         fun Variant.encode() = "$key:${type.name}=$value"

@@ -14,7 +14,7 @@ class BehaviorTreeConfig(val variantsConfig: VariantsConfig, val nodeConfig: Nod
     }
 
     fun encode(): String {
-        val variants = variantsConfig.encode(1)
+        val variants = variantsConfig.encode(0)
         val node = nodeConfig.encode(0)
         return """#VARIANTS_START
             |$variants

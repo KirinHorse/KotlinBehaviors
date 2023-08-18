@@ -7,7 +7,7 @@ import org.kirinhorse.kbt.KBTInput
 import org.kirinhorse.kbt.NodeConfig
 import org.kirinhorse.kbt.Types
 
-@KBTInput("duration", Types.BTType.Int)
+@KBTInput("duration", Types.KBTType.Int)
 class Delay(behaviorTree: BehaviorTree, config: NodeConfig) : Decorator(behaviorTree, config) {
     private val now get() = System.currentTimeMillis()
     private var startTime = 0L
