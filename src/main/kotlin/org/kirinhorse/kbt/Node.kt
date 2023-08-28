@@ -57,6 +57,11 @@ abstract class Node(val tree: BehaviorTree, val config: NodeConfig) {
         return inputs.get(key, clazz) ?: throw ErrorDataEmpty(key)
     }
 
+    fun <T : Any> getInputOrNull(key: String, clazz: KClass<T>): T? {
+        if (inputs == null) return null
+        return inputs.get(key, clazz)
+    }
+
     fun <T : Any> setOutput(key: String, value: T?) {
         if (outputs == null) throw ErrorInputNotFound(key)
         outputs.set(key, value)

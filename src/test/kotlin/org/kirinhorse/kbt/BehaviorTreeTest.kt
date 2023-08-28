@@ -41,20 +41,20 @@ class BehaviorTreeTest {
         //@formatter:off
         val root = KBTFactory.SEQ(
             mutableListOf(
-                KBTFactory.delay(2000),
+                KBTFactory.delay("2000"),
                 KBTFactory.print("Tree start ===>>>"),
-                KBTFactory.repeat(3,
+                KBTFactory.repeat("3","false",
                     KBTFactory.SEQ(mutableListOf(
-                        KBTFactory.delay(1000),
+                        KBTFactory.delay("1000"),
                         KBTFactory.print("Some actions execute"),
-                        KBTFactory.delay(500)
+                        KBTFactory.delay("500")
                     ))
                 ),
                 KBTFactory.print("Tree end <<<===")
             )
         )
         //@formatter:on
-        val config = BehaviorTreeConfig(VariantsConfig(mutableMapOf()), root)
+        val config = BehaviorTreeConfig(VariantsConfig(mutableMapOf()), ComponentsConfig(mutableListOf()), root)
         val tree = BehaviorTree(config)
         runBlocking { tree.start() }
         assert(true)

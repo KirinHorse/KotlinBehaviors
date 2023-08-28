@@ -17,6 +17,14 @@ class ErrorVariantNotFound(private val key: String) : Error() {
     override val msg get() = "未找到变量:${key}"
 }
 
+class ErrorTreeNotFound(private val name: String) : Error() {
+    override val msg get() = "未找到脚本:${name}"
+}
+
+class ErrorComponentNotFound(private val name: String) : Error() {
+    override val msg get() = "未找到组件:${name}"
+}
+
 class ErrorTypeWrong(private val key: String) : Error() {
     override val msg get() = "数据类型错误:${key}"
 }

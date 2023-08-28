@@ -41,7 +41,7 @@ class NodeConfig(
             return map
         }
 
-        private fun decodeList(text: String?): MutableList<NodeConfig>? {
+        fun decodeList(text: String?): MutableList<NodeConfig>? {
             if (text.isNullOrBlank()) return null
             val list = mutableListOf<NodeConfig>()
             var parser = Parser(text.trim())

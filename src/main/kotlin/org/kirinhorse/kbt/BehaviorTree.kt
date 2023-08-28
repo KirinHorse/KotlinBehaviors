@@ -2,6 +2,8 @@ package org.kirinhorse.kbt
 
 class BehaviorTree(val config: BehaviorTreeConfig) {
     val variants = Variants(config.variantsConfig)
+    val components = Components(this, config.componentsConfig)
+
     val treeListeners = mutableListOf<TreeListener>()
     val nodeListeners = mutableListOf<NodeListener>()
 
