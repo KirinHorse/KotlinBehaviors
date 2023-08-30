@@ -10,6 +10,8 @@ import org.kirinhorse.kbt.controls.Fallback
 import org.kirinhorse.kbt.controls.Parallel
 import org.kirinhorse.kbt.controls.Sequence
 import org.kirinhorse.kbt.decorators.Delay
+import org.kirinhorse.kbt.decorators.Force
+import org.kirinhorse.kbt.decorators.Not
 import org.kirinhorse.kbt.decorators.Repeat
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
@@ -51,6 +53,8 @@ object KBTFactory {
         //decorators
         registerNode("delay", Delay::class)
         registerNode("repeat", Repeat::class)
+        registerNode("force", Force::class)
+        registerNode("not", Not::class)
         //actions
         registerNode("pause", ActionPause::class)
         registerNode("resume", ActionResume::class)
@@ -83,8 +87,14 @@ object KBTFactory {
         name, "repeat", mutableMapOf("times" to times, "stop" to stop), null, mutableListOf(child)
     )
 
+    fun force(status: String, child: NodeConfig, name: String? = null) = NodeConfig(
+        name, "force", mutableMapOf("status" to status), null, mutableListOf(child)
+    )
+
+    fun not(child: NodeConfig, name: String? = null) = NodeConfig(name, "not", null, null, mutableListOf(child))
+
     fun print(text: String, name: String? = null) =
-        NodeConfig(name, "print", mutableMapOf("text" to "\"text\""), null, null)
+        NodeConfig(name, "print", mutableMapOf("text" to "\"$text\""), null, null)
 
     fun pause(name: String? = null) = NodeConfig(name, "pause", null, null, null)
     fun resume(name: String? = null) = NodeConfig(name, "resume", null, null, null)
