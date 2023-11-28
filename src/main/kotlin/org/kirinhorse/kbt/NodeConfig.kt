@@ -47,9 +47,10 @@ class NodeConfig(
             var parser = Parser(text.trim())
             do {
                 if (list.isNotEmpty()) parser = Parser(parser.next!!)
-                val inputs = decodeMap(parser.inputs)
-                val outputs = decodeMap(parser.outputs)
-                val children = decodeList(parser.children)
+                val builder = KBTFactory.getBuilder(parser.type!!)
+                val inputs = decodeMap(parser.inputs) ?: if (builder.inputs.isEmpty()) null else mutableMapOf()
+                val outputs = decodeMap(parser.outputs) ?: if (builder.outputs.isEmpty()) null else mutableMapOf()
+                val children = decodeList(parser.children) ?: if (!builder.hasChildren) null else mutableListOf()
                 val config = NodeConfig(parser.name, parser.type!!, inputs, outputs, children)
                 list.add(config)
             } while (parser.hasNext)
@@ -58,12 +59,13 @@ class NodeConfig(
 
         /***
          * #type[#name](#input)->(#output):#children
-         * sample:
+         * ```sample:
          * SEQ:
          *  delay(duration=2000)
          *  print(text="some texts")
+         * ```
          */
-        fun decode(text: String): NodeConfig = decodeList(text)!!.first()
+        fun decode(text: String): NodeConfig? = decodeList(text)?.firstOrNull()
     }
 
     class Parser(val text: String) {
@@ -126,6 +128,7 @@ class NodeConfig(
                 }
                 sb.append(c)
             }
+            readType(' ', sb)
         }
 
         private fun readType(c: Char, sb: StringBuffer) {

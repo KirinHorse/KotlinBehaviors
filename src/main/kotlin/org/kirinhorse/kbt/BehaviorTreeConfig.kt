@@ -3,7 +3,7 @@ package org.kirinhorse.kbt
 import org.kirinhorse.kbt.KBTHelper.subBetween
 
 class BehaviorTreeConfig(
-    val variantsConfig: VariantsConfig, val componentsConfig: ComponentsConfig, val nodeConfig: NodeConfig
+    val variantsConfig: VariantsConfig, val componentsConfig: ComponentsConfig, val nodeConfig: NodeConfig?
 ) {
     companion object {
         fun decode(text: String): BehaviorTreeConfig {
@@ -20,7 +20,7 @@ class BehaviorTreeConfig(
     fun encode(): String {
         val variants = variantsConfig.encode(0)
         val components = componentsConfig.encode()
-        val node = nodeConfig.encode(0)
+        val node = nodeConfig?.encode(0) ?: ""
         return """#VARIANTS_START
             |$variants
             |#VARIANTS_END

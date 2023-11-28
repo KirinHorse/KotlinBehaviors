@@ -7,27 +7,27 @@ class BehaviorTree(val config: BehaviorTreeConfig) {
     val treeListeners = mutableListOf<TreeListener>()
     val nodeListeners = mutableListOf<NodeListener>()
 
-    val root = KBTFactory.createNode(this, config.nodeConfig)
+    val root = if (config.nodeConfig == null) null else KBTFactory.createNode(this, config.nodeConfig)
 
     suspend fun start() {
         for (l in treeListeners) l.onStart(this)
-        root.execute()
+        root?.execute()
         stop(false)
     }
 
     fun pause() {
-        root.pause()
+        root?.pause()
         for (l in treeListeners) l.onPause(this)
     }
 
     fun resume() {
-        root.resume()
+        root?.resume()
         for (l in treeListeners) l.onResume(this)
     }
 
     fun stop(cancel: Boolean = true) {
-        if (cancel) root.cancel()
-        root.reset()
+        if (cancel) root?.cancel()
+        root?.reset()
         for (l in treeListeners) l.onStop(this)
     }
 

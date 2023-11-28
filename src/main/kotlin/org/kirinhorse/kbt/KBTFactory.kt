@@ -37,6 +37,8 @@ object KBTFactory {
     }
 
     private val nodeBuilders = mutableMapOf<String, BTNodeBuilder<*>>()
+    val builders get() = nodeBuilders.toMap()
+
     var loader: ILoader? = null
 
     fun <T : Node> registerNode(type: String, clazz: KClass<T>) {
