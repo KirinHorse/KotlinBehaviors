@@ -1,8 +1,8 @@
 package org.kirinhorse.kbt
 
-abstract class Decorator(tree: BehaviorTree, config: NodeConfig) : Node(tree, config) {
+abstract class Decorator(component: Component, config: NodeConfig) : Node(component, config) {
     val child = if (config.children.isNullOrEmpty()) null
-    else KBTFactory.createNode(tree, config.children.first())
+    else KBTFactory.createNode(component, config.children.first())
 
     override fun onPause() {
         child?.pause()

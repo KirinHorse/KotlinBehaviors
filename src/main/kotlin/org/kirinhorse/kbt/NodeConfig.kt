@@ -1,6 +1,6 @@
 package org.kirinhorse.kbt
 
-class NodeConfig(
+data class NodeConfig(
     var name: String?,
     val type: String,
     val inputs: MutableMap<String, String>?,
@@ -33,12 +33,34 @@ class NodeConfig(
         private fun decodeMap(text: String?): MutableMap<String, String>? {
             if (text.isNullOrBlank()) return null
             val map = mutableMapOf<String, String>()
-            text.split(',').forEach {
+            splitByToken(text).forEach {
                 if (it.isBlank()) return@forEach
                 val (key, value) = it.split('=', limit = 2)
                 map[key.trim()] = value.trim()
             }
             return map
+        }
+
+        private fun splitByToken(text: String, token: Char = ','): MutableList<String> {
+            val list = mutableListOf<String>()
+            val chars = text.iterator()
+            var deep = 0
+            var sb = StringBuffer()
+            while (chars.hasNext()) {
+                val c = chars.next()
+                when (c) {
+                    '(' -> deep++
+                    ')' -> deep--
+                    token -> if (deep == 0) {
+                        list.add(sb.toString())
+                        sb = StringBuffer()
+                        continue
+                    }
+                }
+                sb.append(c)
+            }
+            if (sb.isNotEmpty()) list.add(sb.toString())
+            return list
         }
 
         fun decodeList(text: String?): MutableList<NodeConfig>? {

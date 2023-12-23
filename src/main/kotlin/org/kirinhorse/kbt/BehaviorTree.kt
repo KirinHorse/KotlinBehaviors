@@ -1,33 +1,31 @@
 package org.kirinhorse.kbt
 
 class BehaviorTree(val config: BehaviorTreeConfig) {
-    val variants = Variants(config.variantsConfig)
-    val components = Components(this, config.componentsConfig)
+    val mainComponent = Component(this, config.mainConfig)
+    val components = config.componentsConfig.mapValues { Component(this@BehaviorTree, it.value) }
 
     val treeListeners = mutableListOf<TreeListener>()
     val nodeListeners = mutableListOf<NodeListener>()
 
-    val root = if (config.nodeConfig == null) null else KBTFactory.createNode(this, config.nodeConfig)
-
     suspend fun start() {
         for (l in treeListeners) l.onStart(this)
-        root?.execute()
+        mainComponent.start()
         stop(false)
     }
 
     fun pause() {
-        root?.pause()
+        mainComponent.pause()
         for (l in treeListeners) l.onPause(this)
     }
 
     fun resume() {
-        root?.resume()
+        mainComponent.resume()
         for (l in treeListeners) l.onResume(this)
     }
 
     fun stop(cancel: Boolean = true) {
-        if (cancel) root?.cancel()
-        root?.reset()
+        mainComponent.cancel()
+        mainComponent.reset()
         for (l in treeListeners) l.onStop(this)
     }
 

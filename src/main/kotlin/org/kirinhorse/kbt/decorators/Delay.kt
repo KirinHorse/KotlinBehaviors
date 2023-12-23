@@ -2,13 +2,14 @@ package org.kirinhorse.kbt.decorators
 
 import kotlinx.coroutines.delay
 import org.kirinhorse.kbt.BehaviorTree
+import org.kirinhorse.kbt.Component
 import org.kirinhorse.kbt.Decorator
 import org.kirinhorse.kbt.KBTInput
 import org.kirinhorse.kbt.NodeConfig
 import org.kirinhorse.kbt.Types
 
 @KBTInput("duration", Types.KBTType.Int)
-class Delay(behaviorTree: BehaviorTree, config: NodeConfig) : Decorator(behaviorTree, config) {
+class Delay(component: Component, config: NodeConfig) : Decorator(component, config) {
     private val now get() = System.currentTimeMillis()
     private var startTime = 0L
     private var duration = 0

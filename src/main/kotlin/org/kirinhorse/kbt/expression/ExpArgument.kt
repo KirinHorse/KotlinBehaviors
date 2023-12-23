@@ -22,7 +22,7 @@ class ExpArgument(val exp: Expression, private val expText: String, value: Any? 
 
     val isNumber = isInt || isFloat
 
-    val isText = (value is String) || (expText.startsWith(swc) && expText.endsWith(swc))
+    val isText = (value is String) || (expText.length > 1 && expText.startsWith(swc) && expText.endsWith(swc))
     private val textValue = when {
         value is String -> value
         isText -> expText.substring(1, expText.length - 1)

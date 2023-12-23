@@ -6,7 +6,9 @@ import kotlin.reflect.full.isSubclassOf
 
 object Types {
     enum class KBTType(val clazz: KClass<*>) {
-        Bool(Boolean::class), Int(kotlin.Int::class), Float(kotlin.Float::class), Text(String::class), Vector2(KBTVector2::class)
+        Bool(Boolean::class), Int(kotlin.Int::class), Float(kotlin.Float::class), Text(String::class), Vector2(
+            KBTVector2::class
+        )
     }
 
     fun KBTType.toValue(text: String): Any? {
@@ -14,15 +16,18 @@ object Types {
             KBTType.Bool -> text.toBooleanStrictOrNull()
             KBTType.Int -> text.toIntOrNull()
             KBTType.Float -> text.toFloatOrNull()
-            KBTType.Text -> text.trim()
             KBTType.Vector2 -> KBTVector2.fromText(text)
+            KBTType.Text -> text.run {
+                if (length < 2 || !startsWith('"') || !endsWith('"')) null
+                else substring(1, length - 1)
+            }
         }
     }
 
     fun KBTType.toString(value: Any?): String {
         if (value == null) return ""
         return when (this) {
-            KBTType.Text -> value as String
+            KBTType.Text -> "\"$value\""
             KBTType.Vector2 -> (value as KBTVector2).toString()
             else -> value.toString()
         }

@@ -4,7 +4,7 @@ import org.kirinhorse.kbt.Variants.Companion.encode
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 
-class VariantsConfig(val map: MutableMap<String, Variants.Variant>) {
+data class VariantsConfig(val map: MutableMap<String, Variants.Variant>) {
     companion object {
         fun decode(text: String): VariantsConfig {
             val lines = text.split('\n')

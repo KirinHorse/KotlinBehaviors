@@ -17,11 +17,11 @@ class BTInPort(val variants: Variants, inputs: List<KBTInput>, inputConfig: Muta
     private val values = mapOf(* inputs.map { it.key to BTInValue(it, inputConfig[it.key] ?: "") }.toTypedArray())
 
     companion object {
-        fun create(behaviorTree: BehaviorTree, config: NodeConfig): BTInPort? {
+        fun create(component: Component, config: NodeConfig): BTInPort? {
             val builder = KBTFactory.getBuilder(config.type)
             if (builder.inputs.isEmpty()) return null
             val inputCfg = config.inputs ?: throw ErrorDataEmpty(builder.inputs.first().key)
-            return BTInPort(behaviorTree.variants, builder.inputs, inputCfg)
+            return BTInPort(component.variants, builder.inputs, inputCfg)
         }
     }
 
@@ -62,11 +62,11 @@ class BTOutPort(val variants: Variants, outputs: List<KBTOutput>, outputConfig: 
     private val values = mapOf(* outputs.map { it.key to BTOutValue(it, outputConfig[it.key] ?: "") }.toTypedArray())
 
     companion object {
-        fun create(behaviorTree: BehaviorTree, config: NodeConfig): BTOutPort? {
+        fun create(component: Component, config: NodeConfig): BTOutPort? {
             val builder = KBTFactory.getBuilder(config.type)
             if (builder.outputs.isEmpty()) return null
             val outputCfg = config.outputs ?: throw ErrorDataEmpty(builder.outputs.first().key)
-            return BTOutPort(behaviorTree.variants, builder.outputs, outputCfg)
+            return BTOutPort(component.variants, builder.outputs, outputCfg)
         }
     }
 

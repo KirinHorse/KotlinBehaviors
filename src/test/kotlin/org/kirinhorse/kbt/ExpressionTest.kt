@@ -1,7 +1,7 @@
 package org.kirinhorse.kbt
 
-import org.kirinhorse.kbt.types.KBTVector2
 import org.kirinhorse.kbt.expression.ExpFactory
+import org.kirinhorse.kbt.types.KBTVector2
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -28,6 +28,11 @@ class ExpressionTest {
     )
 
     private val successful = mapOf(
+        "(10,10)" to KBTVector2(10, 10),
+        "(((10,10)))" to KBTVector2(10, 10),
+        "!\$check" to false,
+        "\"56789\"" to "56789",
+        "56789" to 56789,
         "5*3/(4+2)-(-5+1)*2" to 10.5f,
         "!\$check||\$intX>0&&\$nIntY>=0||\$intX<=0&&\$nIntY<0" to false,
         "\$intX<0?\$vector2:\$intY>0? (0,\$intY):(0,0)" to KBTVector2(0, 5),

@@ -6,6 +6,14 @@ class Expression(val variants: Variants, val expText: String) {
     companion object {
         const val STRING_WRAPPER_CHAR = '\"'
 
+        fun preProcess(expText: String): String {
+            var text = expText.trim()
+            while (text.startsWith('(') && text.endsWith(')')) {
+                text = text.substring(1, text.length - 1).trim()
+            }
+            return text
+        }
+
         fun tokenize(text: String, keyWords: List<String>): List<String> {
             val tokens = mutableListOf<String>()
             var depth = 0
@@ -48,10 +56,10 @@ class Expression(val variants: Variants, val expText: String) {
         }
     }
 
-    val tokens = tokenize(expText, ExpFactory.keyWords)
+    val text = preProcess(expText)
+    val tokens = tokenize(text, ExpFactory.keyWords)
 
     fun evaluate(): ExpArgument {
-        val text = expText.trim()
         var minOpt: ExpOperator? = null
         for (i in tokens.indices) {
             val token = tokens[i]
@@ -63,9 +71,6 @@ class Expression(val variants: Variants, val expText: String) {
         if (text.startsWith('$')) {
             val variant = variants.getVariant(text.substring(1))
             return ExpArgument(this, "", variant?.value)
-        }
-        if (text.startsWith('(') && text.endsWith(')')) {
-            return ExpArgument(this, text.substring(1, text.length - 1))
         }
         val arg = ExpArgument(this, text)
         if (arg.isExpression) throw ExpErrorUnknownSymbol(this)

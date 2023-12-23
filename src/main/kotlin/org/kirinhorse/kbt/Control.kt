@@ -1,7 +1,7 @@
 package org.kirinhorse.kbt
 
-abstract class Control(tree: BehaviorTree, config: NodeConfig) : Node(tree, config) {
-    val children = config.children?.map { KBTFactory.createNode(tree, it) } ?: listOf()
+abstract class Control(component: Component, config: NodeConfig) : Node(component, config) {
+    val children = config.children?.map { KBTFactory.createNode(component, it) } ?: listOf()
 
     override fun onPause() {
         children.forEach { it.pause() }

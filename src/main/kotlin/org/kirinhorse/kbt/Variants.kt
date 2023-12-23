@@ -1,6 +1,7 @@
 package org.kirinhorse.kbt
 
 import org.kirinhorse.kbt.KBTHelper.subBetween
+import org.kirinhorse.kbt.Types.toString
 import org.kirinhorse.kbt.Types.toValue
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
@@ -18,7 +19,7 @@ class Variants(val config: VariantsConfig) {
             return Variant(key, type, value)
         }
 
-        fun Variant.encode() = "$key:${type.name}=$value"
+        fun Variant.encode() = "$key:${type.name}=${type.toString(value)}"
     }
 
     private val map = config.map.toMap()

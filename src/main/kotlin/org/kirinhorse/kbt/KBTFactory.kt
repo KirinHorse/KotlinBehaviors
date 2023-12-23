@@ -14,6 +14,7 @@ import org.kirinhorse.kbt.decorators.Force
 import org.kirinhorse.kbt.decorators.Not
 import org.kirinhorse.kbt.decorators.Repeat
 import kotlin.reflect.KClass
+import kotlin.reflect.full.findAnnotations
 import kotlin.reflect.full.isSubclassOf
 
 object KBTFactory {
@@ -22,12 +23,11 @@ object KBTFactory {
         fun loadComponent(name: String): Node
     }
 
-    class BTNodeBuilder<T : Node>(private val clazz: KClass<T>) {
-        val inputs = clazz.annotations.filterIsInstance<KBTInput>()
-        val outputs = clazz.annotations.filterIsInstance<KBTOutput>()
+    class BTNodeBuilder<T : Node>(val clazz: KClass<T>) {
+        val inputs = clazz.findAnnotations(KBTInput::class)
+        val outputs = clazz.findAnnotations(KBTOutput::class)
 
-        fun build(behaviorTree: BehaviorTree, config: NodeConfig): T =
-            clazz.constructors.first().call(behaviorTree, config)
+        fun build(component: Component, config: NodeConfig): T = clazz.constructors.first().call(component, config)
 
         val isControl = clazz.isSubclassOf(Control::class)
         val isDecorator = clazz.isSubclassOf(Decorator::class)
@@ -41,6 +41,10 @@ object KBTFactory {
 
     var loader: ILoader? = null
 
+    /**注册一个节点
+     * @param type 节点类型
+     * @param clazz 节点Class
+     * */
     fun <T : Node> registerNode(type: String, clazz: KClass<T>) {
         nodeBuilders[type] = BTNodeBuilder(clazz)
     }
@@ -66,9 +70,9 @@ object KBTFactory {
 
     fun getBuilder(type: String) = nodeBuilders[type] ?: throw ErrorActionNotSupport(type)
 
-    fun createNode(behaviorTree: BehaviorTree, config: NodeConfig) = getBuilder(config.type).build(behaviorTree, config)
+    fun createNode(component: Component, config: NodeConfig) = getBuilder(config.type).build(component, config)
 
-    fun createTree(script: String) = BehaviorTree(BehaviorTreeConfig.decode(script))
+//    fun createTree(script: String) = BehaviorTree(BehaviorTreeConfig.decode(script))
 
     fun SEQ(children: MutableList<NodeConfig>, name: String? = null) = NodeConfig(name, "SEQ", null, null, children)
     fun PAR(children: MutableList<NodeConfig>, name: String? = null) = NodeConfig(name, "PAR", null, null, children)

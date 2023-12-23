@@ -3,9 +3,11 @@ package org.kirinhorse.kbt
 import kotlinx.coroutines.CompletableDeferred
 import kotlin.reflect.KClass
 
-abstract class Node(val tree: BehaviorTree, val config: NodeConfig) {
-    private val inputs = BTInPort.create(tree, config)
-    private val outputs = BTOutPort.create(tree, config)
+abstract class Node(val component: Component, val config: NodeConfig) {
+    val tree = component.tree
+
+    private val inputs = BTInPort.create(component, config)
+    private val outputs = BTOutPort.create(component, config)
 
     var isRunning = false
         private set

@@ -1,5 +1,6 @@
 package org.kirinhorse.kbt.types
 
+import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 
@@ -44,7 +45,9 @@ class KBTVector2(var x: Float, var y: Float) {
     fun length() = sqrt(x * x + y * y)
 
     override fun toString(): String {
-        return "($x,$y)"
+        val xs = if (x % 1f == 0f) x.roundToInt().toString() else x.toString()
+        val ys = if (y % 1f == 0f) y.roundToInt().toString() else y.toString()
+        return "($xs, $ys)"
     }
 
     override fun equals(other: Any?): Boolean {

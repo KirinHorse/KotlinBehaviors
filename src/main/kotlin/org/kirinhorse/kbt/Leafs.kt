@@ -1,7 +1,7 @@
 package org.kirinhorse.kbt
 
-abstract class Leaf(tree: BehaviorTree, config: NodeConfig) : Node(tree, config)
+abstract class Leaf(component: Component, config: NodeConfig) : Node(component, config)
 
-abstract class Action(tree: BehaviorTree, config: NodeConfig) : Leaf(tree, config)
+abstract class Action(component: Component, config: NodeConfig) : Leaf(component, config)
 
-abstract class Condition(tree: BehaviorTree, config: NodeConfig) : Leaf(tree, config)
+abstract class Condition(component: Component, config: NodeConfig) : Leaf(component, config)
