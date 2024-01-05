@@ -6,8 +6,8 @@ import kotlin.reflect.KClass
 abstract class Node(val component: Component, val config: NodeConfig) {
     val tree = component.tree
 
-    private val inputs = BTInPort.create(component, config)
-    private val outputs = BTOutPort.create(component, config)
+    val inputs = BTInPort.create(component, config)
+    val outputs = BTOutPort.create(component, config)
 
     var isRunning = false
         private set
@@ -59,10 +59,9 @@ abstract class Node(val component: Component, val config: NodeConfig) {
         return inputs.get(key, clazz) ?: throw ErrorDataEmpty(key)
     }
 
-    fun <T : Any> getInputOrNull(key: String, clazz: KClass<T>): T? {
-        if (inputs == null) return null
-        return inputs.get(key, clazz)
-    }
+    fun <T : Any> getInputOrNull(key: String, clazz: KClass<T>) = inputs?.get(key, clazz)
+
+    fun getOutput(key: String): BTOutPort.BTOutValue? = outputs?.outValues?.get(key)
 
     fun <T : Any> setOutput(key: String, value: T?) {
         if (outputs == null) throw ErrorInputNotFound(key)

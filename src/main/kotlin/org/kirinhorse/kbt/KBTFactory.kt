@@ -1,5 +1,6 @@
 package org.kirinhorse.kbt
 
+import org.kirinhorse.kbt.actions.ActionAssign
 import org.kirinhorse.kbt.actions.ActionComponent
 import org.kirinhorse.kbt.actions.ActionPause
 import org.kirinhorse.kbt.actions.ActionPrint
@@ -19,8 +20,9 @@ import kotlin.reflect.full.isSubclassOf
 
 object KBTFactory {
     interface ILoader {
-        fun loadTree(name: String): BehaviorTree
-        fun loadComponent(name: String): Node
+        fun loadVariant(key: String): Variants.Variant?
+        fun loadTree(name: String): BehaviorTree?
+        fun loadComponent(tree: BehaviorTree, name: String): Component?
     }
 
     class BTNodeBuilder<T : Node>(val clazz: KClass<T>) {
@@ -66,6 +68,7 @@ object KBTFactory {
         registerNode("resume", ActionResume::class)
         registerNode("stop", ActionStop::class)
         registerNode("print", ActionPrint::class)
+        registerNode("assign", ActionAssign::class)
     }
 
     fun getBuilder(type: String) = nodeBuilders[type] ?: throw ErrorActionNotSupport(type)

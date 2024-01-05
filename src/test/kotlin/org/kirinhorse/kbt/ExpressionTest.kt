@@ -7,8 +7,8 @@ import kotlin.test.assertEquals
 
 class ExpressionTest {
     private fun createVariants(vararg pairs: Pair<String, Any>): Variants {
-        val vps = pairs.map { it.first to Variants.Variant(it.first, Types.getType(it.second)!!, it.second) }
-        return Variants(VariantsConfig(mutableMapOf(*vps.toTypedArray())))
+        val vps = pairs.associate { it.first to Variants.Variant(it.first, Types.getType(it.second)!!, it.second) }
+        return Variants(vps.toMutableMap())
     }
 
     private val variants = createVariants(
@@ -29,7 +29,9 @@ class ExpressionTest {
 
     private val successful = mapOf(
         "(10,10)" to KBTVector2(10, 10),
+        "100+ \$intX" to 103,
         "(((10,10)))" to KBTVector2(10, 10),
+        "(50 , 60) * random(1, 1)" to KBTVector2(50, 60),
         "!\$check" to false,
         "\"56789\"" to "56789",
         "56789" to 56789,
@@ -39,7 +41,10 @@ class ExpressionTest {
         "!\$check?0:length(\$text1)<=10?1:-1" to 1,
         "\$check?length(\$text1)>10?1:-1:0" to -1,
         "\$check?-10:20+length(\$text1)>10?-1:-2" to -10,
-        "length(\$vector2)==5&& contains(\$text3,\"'\") && length(\$text1) > indexOf(\$text3,\"e\")" to false
+        "length(\$vector2)==5&& contains(\$text3,\"'\") && length(\$text1) > indexOf(\$text3,\"e\")" to false,
+        "random(2,3) >= 2" to true,
+        "random(2.5,3) < 3" to true,
+        "length(random((2,3),1)) < 5" to true,
     )
 
     @Test

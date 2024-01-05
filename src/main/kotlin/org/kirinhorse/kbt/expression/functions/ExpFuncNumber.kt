@@ -1,8 +1,9 @@
 package org.kirinhorse.kbt.expression.functions
 
-import org.kirinhorse.kbt.expression.Expression
 import org.kirinhorse.kbt.expression.ExpArgument
 import org.kirinhorse.kbt.expression.ExpFunction
+import org.kirinhorse.kbt.expression.Expression
+import org.kirinhorse.kbt.types.KBTVector2
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -87,13 +88,35 @@ class ExpRound(exp: Expression, keyWord: String, position: Int) : ExpFunction(ex
     }
 }
 
+@Suppress("IMPLICIT_CAST_TO_ANY")
 class ExpRandom(exp: Expression, keyWord: String, position: Int) : ExpFunction(exp, keyWord, position) {
     override fun onResolve(): ExpArgument {
         if (args.size != 2) throw error
-        val (from, to) = args
+        val (left, right) = args
         val value = when {
-            from.isInt && to.isInt -> Random.nextInt(from.int, to.int + 1)
-            from.isNumber && to.isNumber -> Random.nextDouble(from.float.toDouble(), to.float.toDouble()).toFloat()
+            left.isInt && right.isInt -> Random.nextInt(left.int, right.int + 1)
+            left.isNumber && right.isNumber -> Random.nextDouble(left.float.toDouble(), right.float.toDouble())
+                .toFloat()
+
+            left.isVector2 && right.isVector2 -> {
+                val x = left.vector2.x
+                val y = left.vector2.y
+                val dx = right.vector2.x
+                val dy = right.vector2.y
+                val rx = Random.nextDouble((x - dx).toDouble(), (x + dx).toDouble()).toFloat()
+                val ry = Random.nextDouble((y - dy).toDouble(), (y + dy).toDouble()).toFloat()
+                KBTVector2(rx, ry)
+            }
+
+            left.isVector2 && right.isNumber -> {
+                val x = left.vector2.x
+                val y = left.vector2.y
+                val dr = right.float
+                val rx = Random.nextDouble((x - dr).toDouble(), (x + dr).toDouble()).toFloat()
+                val ry = Random.nextDouble((y - dr).toDouble(), (y + dr).toDouble()).toFloat()
+                KBTVector2(rx, ry)
+            }
+
             else -> throw error
         }
         return ExpArgument(exp, "", value)

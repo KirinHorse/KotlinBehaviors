@@ -14,7 +14,7 @@ class ActionSubTree(component: Component, config: NodeConfig) : Action(component
     private var subTree: BehaviorTree? = null
     override suspend fun onExecute(): Boolean {
         val name = getInput("name", String::class)
-        subTree = KBTFactory.loader?.loadTree(name) ?: throw ErrorTreeNotFound(name)
+        if (subTree == null) subTree = KBTFactory.loader?.loadTree(name) ?: throw ErrorTreeNotFound(name)
         subTree?.start()
         return isRunning
     }

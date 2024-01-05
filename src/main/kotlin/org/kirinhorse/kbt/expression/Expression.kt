@@ -6,14 +6,6 @@ class Expression(val variants: Variants, val expText: String) {
     companion object {
         const val STRING_WRAPPER_CHAR = '\"'
 
-        fun preProcess(expText: String): String {
-            var text = expText.trim()
-            while (text.startsWith('(') && text.endsWith(')')) {
-                text = text.substring(1, text.length - 1).trim()
-            }
-            return text
-        }
-
         fun tokenize(text: String, keyWords: List<String>): List<String> {
             val tokens = mutableListOf<String>()
             var depth = 0
@@ -24,8 +16,8 @@ class Expression(val variants: Variants, val expText: String) {
                 var add = true
                 val char = text[index]
                 when {
-                    char == '(' -> depth++
-                    char == ')' -> depth--
+                    char == '(' -> if (!insideString) depth++
+                    char == ')' -> if (!insideString) depth--
                     char == STRING_WRAPPER_CHAR -> insideString = !insideString
                     depth == 0 && !insideString -> {
                         val rest = text.substring(index)
@@ -56,8 +48,7 @@ class Expression(val variants: Variants, val expText: String) {
         }
     }
 
-    val text = preProcess(expText)
-    val tokens = tokenize(text, ExpFactory.keyWords)
+    val tokens = tokenize(expText, ExpFactory.keyWords)
 
     fun evaluate(): ExpArgument {
         var minOpt: ExpOperator? = null
@@ -68,11 +59,14 @@ class Expression(val variants: Variants, val expText: String) {
             else if (ExpOperator.comparator.compare(minOpt, opt) > 0) minOpt = opt
         }
         if (minOpt != null) return minOpt.resolve()
-        if (text.startsWith('$')) {
-            val variant = variants.getVariant(text.substring(1))
+        if (expText.startsWith('(') && expText.endsWith(')')) {
+            return Expression(variants, expText.substring(1, expText.length - 1).trim()).evaluate()
+        }
+        if (expText.startsWith('$')) {
+            val variant = variants.getVariant(expText.substring(1))
             return ExpArgument(this, "", variant?.value)
         }
-        val arg = ExpArgument(this, text)
+        val arg = ExpArgument(this, expText)
         if (arg.isExpression) throw ExpErrorUnknownSymbol(this)
         return arg
     }

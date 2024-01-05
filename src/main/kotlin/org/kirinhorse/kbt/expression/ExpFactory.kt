@@ -1,5 +1,6 @@
 package org.kirinhorse.kbt.expression
 
+import org.kirinhorse.kbt.Variants
 import org.kirinhorse.kbt.expression.functions.ExpAbs
 import org.kirinhorse.kbt.expression.functions.ExpCeil
 import org.kirinhorse.kbt.expression.functions.ExpContains
@@ -28,7 +29,6 @@ import org.kirinhorse.kbt.expression.symbols.ExpRem
 import org.kirinhorse.kbt.expression.symbols.ExpTimes
 import org.kirinhorse.kbt.expression.symbols.ExpVector2
 import org.kirinhorse.kbt.expression.symbols.ExpXor
-import org.kirinhorse.kbt.Variants
 import kotlin.reflect.KClass
 
 object ExpFactory {
@@ -87,7 +87,7 @@ object ExpFactory {
     fun createOperator(exp: Expression, keyWord: String, position: Int) = optBuilders[keyWord]?.build(exp, position)
 
     fun evaluate(variants: Variants, exp: String): Any? {
-        val arg = Expression(variants, exp).evaluate()
+        val arg = Expression(variants, exp.trim()).evaluate()
         return when {
             arg.isBool -> arg.bool
             arg.isInt -> arg.int

@@ -3,7 +3,7 @@ package org.kirinhorse.kbt
 
 data class ComponentConfig(val variantsConfig: VariantsConfig, val nodeConfig: NodeConfig?)
 class Component(val tree: BehaviorTree, config: ComponentConfig) {
-    val variants = Variants(config.variantsConfig)
+    val variants = Variants(config.variantsConfig.map.mapValues { it.value.copy() })
     val node = if (config.nodeConfig == null) null else KBTFactory.createNode(this, config.nodeConfig)
     suspend fun start() = node?.execute()
 
