@@ -4,6 +4,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlin.reflect.KClass
 
 abstract class Node(val component: Component, val config: NodeConfig) {
+    private var needReset = false
     val tree = component.tree
 
     val inputs = BTInPort.create(component, config)
@@ -20,6 +21,7 @@ abstract class Node(val component: Component, val config: NodeConfig) {
     suspend fun execute(): Boolean {
         tree.nodeListeners.forEach { it.beforeExecute(this) }
         isRunning = true
+        needReset = true
         val result = onExecute() && isRunning
         isRunning = false
         tree.nodeListeners.forEach { it.afterExecute(this, result) }
@@ -41,6 +43,7 @@ abstract class Node(val component: Component, val config: NodeConfig) {
     }
 
     fun cancel() {
+        if (!isRunning) return
         isRunning = false
         if (isPaused) pauseDeferred?.complete(false)
         onCancel()
@@ -48,6 +51,8 @@ abstract class Node(val component: Component, val config: NodeConfig) {
     }
 
     fun reset() {
+        if (!needReset) return
+        needReset = false
         isRunning = false
         pauseDeferred = null
         outputs?.reset()
